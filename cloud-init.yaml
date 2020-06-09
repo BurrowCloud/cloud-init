@@ -1,0 +1,25 @@
+#cloud-config
+# Add the group 'deploy-users' to the system. This group will gain
+#  sudo access in the 'write_files' step
+groups:
+  - deploy-users
+
+# Add Ansible user to manage the system
+users:
+  - default
+  - name: mrrobot
+    primary_group: mrrobot
+    groups:
+      - users
+      - sudo
+      - deploy-users
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDvrMTA6WTXoqRV0gFCII+VY3eLQmNPUZChTD9x68O2KobtBZXPuAVpWvmZHwqCS4YWvxi+zgaPA+Q+leFtd6aPlcH2vX4YB7D3TjTRASUYqSHNmlDWm+P+MKgrK/TiTeHnhGjwQUZ4iRFgRPwebQUzsS2gtDS+8KnH6rxF1tabSeonjJOIIuYViS3TJWc2KHHFy63jj60TFEcU7APpyl8znBBFZ68H58EraVO1PY3dAsgEZC/D7gkGETXb3EmvaWHlOTAFT7jEG1dV2PAhzxbc4ORqlOaYF6ckPP6NZL4OHhNuZD/osoaBgu+1q1zwvWq9T9pQmmvwdvNbUr8TuHuu3A+iMrCv2PjrCkWm9kIfwUaRko7tHtLIzheP+VvKibryhplclaxcBgQz79vHTg5QxmykrMQ4ztCG3wRVgOzhuwSscDmB5Tfh6zvUiZvYJoeEK95Pa7YNLkgNuMfyyeesyrIQNIPvs/XxjN1k+tukJJ6UtXGbqB5g/vw4wCAIHlneoE1szILNiTEMerp+aldC3/PqwKQih40LB8dM6ZyTym0UzJejBD5eJcYel29P6OV6OXPyRrLEGjrhoredhsavGVXHx3gma1gUQvU+eEK8WdKQVkOvPK92cl/C6bU+VN5+6En53OxP9Dn3zKOPi5Fn3VH2FzH76A8bbUr58REKUw== niek@Nieks-MacBook-Pro.local
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCg8Dpa/jLkzxIvCwBQKXVtOsZZYB1Wo89MgeVB7VfAw0hGvXyWs9oXxTStKkAsPxgR5eAB15SsqI1oY5+nbUtL0Gcr58UGWC4FMn924uPr3AhieeRsd9LPshw5Lu9g/ka71+75rxpQ8her1RTmJkUIoKCdnGOSR7yWfeirXZ8afxHYR9MGBHFwyLYm1MwJTzt3njQmGWKUn91gNZY40s21IyBFNoRmMK/GCa7AV7qRSgQ/V7wSXLmhYfc1naOkssN2DBucTv2oXqPB2JlzRSumCbG0HZ5lqqo7+Sw9l6vUfg3YPLL0W+IbacO8V/EnN4zVZ1FK8LFKuRkMFRIQkHHKJwXSznHJpyIeGoU9uDgm0XVcNhbbLxt7grh9pXD0wYq6H62n86LzL5V1ssBfTntjAkx96gMUZX5aUkvrZSzNYtpkqHIYrCyUwpOEI1wDQVqdBiWzcbBUzVQ03ZgyaUVBWmFnDDBnGq1ApFBuFX3djsQiLQgLC8KhVDMSZ51J4lioNikZQWK3gK5apDKz/W+0/OohM5DbbHt0sv4t3067qyqytqu2bW8UKyQj11Zb25Fn9lvvdcpzPKkk58W/2lHlBFiaGzbI0NdmyEllsWztFtl4JPba8vqGkQkY817RHqUYeP00v/dugVsQnSFXmwT9bCEx178GWrFZKCHh2UxlSw== ansible@qabana_hq
+
+write_files:
+  - path: /etc/sudoers.d/40-deploy-users
+    content: '%deploy-users ALL=(ALL:ALL) NOPASSWD:ALL'
+    owner: 'root:root'
+    permissions: '0440'
+
