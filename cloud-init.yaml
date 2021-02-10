@@ -4,6 +4,9 @@
 groups:
   - deploy-users
 
+# Disable SSH password login
+ssh_pwauth: false
+
 # Add Ansible user to manage the system
 users:
   - default
@@ -23,3 +26,33 @@ write_files:
     owner: 'root:root'
     permissions: '0440'
 
+package_update: true 
+package_upgrade: true 
+
+packages: 
+  - linux-virtual-hwe-20.04
+  - fail2ban
+  - ufw
+  - apparmor
+  - apparmor-profiles 
+
+runcmd:
+  - apt install -f -y 
+  - printf "[sshd]\nenabled = true\nbanaction = ufw\n" > /etc/fail2ban/jail.local
+  - ufw limit ssh/tcp
+  - ufw allow in on eth0
+  - ufw logging off
+  - ufw enable 
+  - sed -i -e "/^PermitRootLogin/s/^.*$/PermitRootLogin no/" /etc/ssh/sshd_config
+  - sed -i -e "/^PasswordAuthentication/s/^.*$/PasswordAuthentication no/" /etc/ssh/sshd_config
+  - sed -i -e "/^X11Forwarding/s/^.*$/X11Forwarding no/" /etc/ssh/sshd_config
+  - systemctl enable fail2ban
+  - systemctl enable ufw 
+  - apt purge -y lxd lxd-client snapd
+  - apt clean 
+  - apt auto-clean
+
+power_state:
+  mode: reboot 
+  timeout: 5
+  condition: true
